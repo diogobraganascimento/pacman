@@ -17,7 +17,7 @@ LARANJA = (255, 140, 0)
 ROSA = (255, 15, 192)
 CIANO = (0, 255, 255)
 
-# Variaveis globais
+# Variáveis globais
 VELOCIDADE = 1
 ACIMA = 1
 ABAIXO = 2
@@ -27,15 +27,15 @@ ESQUERDA = 4
 
 class ElementoJogo(metaclass=ABCMeta):
     @abstractmethod
-    def pintar(self, tela):
-        pass
-    
-    @abstractmethod
-    def calcular_regras(self):
+    def pintar(self, tela) -> None:
         pass
 
     @abstractmethod
-    def processar_eventos(self, eventos):
+    def calcular_regras(self) -> None:
+        pass
+
+    @abstractmethod
+    def processar_eventos(self, events) -> None:
         pass
 
 
@@ -43,7 +43,7 @@ class Movivel(metaclass=ABCMeta):
     @abstractmethod
     def aceitar_movimento(self, direcoes):
         pass
-    
+
     @abstractmethod
     def recusar_movimento(self, direcoes):
         pass
@@ -185,7 +185,8 @@ class Cenario(ElementoJogo):
             direcoes = self.get_direcoes(lin, col)
             if len(direcoes) >= 3:
                 movivel.esquina(direcoes)
-            if isinstance(movivel, Fantasma) and movivel.linha == self.pacman.linha and movivel.coluna == self.pacman.coluna:
+            if isinstance(movivel,
+                          Fantasma) and movivel.linha == self.pacman.linha and movivel.coluna == self.pacman.coluna:
                 self.vidas -= 1
                 if self.vidas <= 0:
                     self.estado = "gameover"
@@ -278,9 +279,9 @@ class Pacman(ElementoJogo, Movivel):
                 elif e.key == pygame.K_UP:
                     self.vel_y = 0
                 elif e.key == pygame.K_DOWN:
-                    self.vel_y = 0    
+                    self.vel_y = 0
 
-    def aceitar_movimento(self):
+    def aceitar_movimento(self, **kwargs):
         self.linha = self.linha_intencao
         self.coluna = self.coluna_intencao
 
@@ -290,19 +291,7 @@ class Pacman(ElementoJogo, Movivel):
 
     def esquina(self, direcoes):
         pass
-    
-    '''
-    Função de exemplo para verificar a funcionalidade do evento com mouse
-    
-    def processar_eventos_mouse(self, eventos):
-        delay = 100
-        for e in eventos:
-            if e.type == pygame.MOUSEMOTION:
-                mouse_x, mouse_y = e.pos
-                self.coluna = (mouse_x - self.centro_x) / delay
-                self.linha = (mouse_y - self.centro_y) /delay 
-    '''
-    
+
 
 class Fantasma(ElementoJogo, Movivel):
     def __init__(self, cor, tamanho):
@@ -328,7 +317,7 @@ class Fantasma(ElementoJogo, Movivel):
             (px + fatia * 6, py + fatia // 2),
             (px + fatia * 7, py + fatia * 2),
             (px + self.tamanho, py + self.tamanho)
-            ]
+        ]
         pygame.draw.polygon(tela, self.cor, contorno, 0)
 
         olho_raio_ext = fatia
@@ -349,7 +338,7 @@ class Fantasma(ElementoJogo, Movivel):
         if self.direcao == ACIMA:
             self.linha_intencao -= self.velocidade
         elif self.direcao == ABAIXO:
-            self.linha_intencao  += self.velocidade
+            self.linha_intencao += self.velocidade
         elif self.direcao == ESQUERDA:
             self.coluna_intencao -= self.velocidade
         elif self.direcao == DIREITA:
@@ -361,7 +350,7 @@ class Fantasma(ElementoJogo, Movivel):
     def esquina(self, direcoes):
         self.mudar_direcao(direcoes)
 
-    def aceitar_movimento(self):
+    def aceitar_movimento(self, **kwargs):
         self.linha = self.linha_intencao
         self.coluna = self.coluna_intencao
 
